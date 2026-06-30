@@ -1,1 +1,17 @@
-
+B.5 CQ5
+SELECT ?excavation ?artefact ?artefactLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P12i_was_present_at ?excavation .
+?excavation a gerasim:ExcavationEvent .
+}
+ORDER BY ?excavation ?artefactLabel
+Για συγκεκριμένη ανασκαφή:
+SELECT ?artefact ?artefactLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P12i_was_present_at gres:exc_TESTSPA0000005777 .
+}
+ORDER BY ?artefactLabel
