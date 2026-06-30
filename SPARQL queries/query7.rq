@@ -1,1 +1,16 @@
-
+B.7 CQ7
+SELECT ?artefactLabel ?productionEvent ?actorLabel ?timespanLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P108i_was_produced_by ?productionEvent .
+OPTIONAL {
+?productionEvent crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+}
+OPTIONAL {
+?productionEvent crm:P4_has_time-span ?timespan .
+?timespan rdfs:label ?timespanLabel .
+}
+}
+ORDER BY ?artefactLabel
