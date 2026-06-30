@@ -1,1 +1,257 @@
+B.1 CQ1
+SELECT ?artefact ?identifierLabel ?artefactLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+crm:P1_is_identified_by ?identifier ;
+rdfs:label ?artefactLabel .
+?identifier rdfs:label ?identifierLabel .
+}
+ORDER BY ?artefact
 
+B.2 CQ2
+SELECT ?artefact ?artefactLabel ?typeLabel ?materialLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P2_has_type ?type .
+?type skos:prefLabel ?typeLabel .
+OPTIONAL {
+?artefact crm:P45_consists_of ?material .
+?material skos:prefLabel ?materialLabel .
+}
+}
+ORDER BY ?artefactLabel
+
+
+
+B.3 CQ3
+SELECT ?artefact ?artefactLabel ?period ?periodLabel ?begin ?end
+86
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:associatedWithPeriod ?period .
+?period skos:prefLabel ?periodLabel .
+OPTIONAL {
+?period crm:P4_has_time-span ?timespan .
+OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?begin . }
+OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end . }
+}
+}
+ORDER BY ?periodLabel ?artefactLabel
+Αν υπάρχουν και ιεραρχικές σχέσεις περιόδων:
+SELECT ?artefactLabel ?periodLabel ?broaderPeriodLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:associatedWithPeriod ?period .
+?period skos:prefLabel ?periodLabel .
+OPTIONAL {
+?period skos:broader ?broaderPeriod .
+?broaderPeriod skos:prefLabel ?broaderPeriodLabel .
+}
+}
+ORDER BY ?artefactLabel
+
+
+B.4 CQ4
+SELECT ?artefactLabel ?placeLabel ?wkt
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P53_has_former_or_current_location ?place .
+?place rdfs:label ?placeLabel ;
+geo:hasGeometry ?geometry .
+87
+?geometry geo:asWKT ?wkt .
+}
+ORDER BY ?artefactLabel
+Για excavation events:
+SELECT ?excavation ?placeLabel ?wkt
+WHERE {
+?excavation a gerasim:ExcavationEvent ;
+crm:P7_took_place_at ?place .
+?place rdfs:label ?placeLabel ;
+geo:hasGeometry ?geometry .
+?geometry geo:asWKT ?wkt .
+}
+ORDER BY ?excavation
+
+
+B.5 CQ5
+SELECT ?excavation ?artefact ?artefactLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P12i_was_present_at ?excavation .
+?excavation a gerasim:ExcavationEvent .
+}
+ORDER BY ?excavation ?artefactLabel
+Για συγκεκριμένη ανασκαφή:
+SELECT ?artefact ?artefactLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P12i_was_present_at gres:exc_TESTSPA0000005777 .
+}
+ORDER BY ?artefactLabel
+
+
+
+B.6 CQ6
+SELECT ?artefact ?artefactLabel ?contextLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:hasStratigraphicContext ?context .
+?context rdfs:label ?contextLabel .
+}
+ORDER BY ?contextLabel ?artefactLabel
+
+
+
+B.7 CQ7
+SELECT ?artefactLabel ?productionEvent ?actorLabel ?timespanLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P108i_was_produced_by ?productionEvent .
+OPTIONAL {
+?productionEvent crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+}
+OPTIONAL {
+?productionEvent crm:P4_has_time-span ?timespan .
+?timespan rdfs:label ?timespanLabel .
+}
+}
+ORDER BY ?artefactLabel
+
+
+B.8 CQ8
+SELECT DISTINCT ?artefactLabel ?record ?docEvent ?actorLabel ?timespanLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P70_is_documented_in ?record .
+OPTIONAL {
+?digitalTwin a hdto:HC2_Heritage_Digital_Twin ;
+crm:P67_refers_to ?artefact ;
+crm:P94i_was_created_by ?docEvent .
+OPTIONAL {
+?docEvent crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+}
+OPTIONAL {
+?docEvent crm:P4_has_time-span ?timespan .
+?timespan rdfs:label ?timespanLabel .
+}
+}
+}
+ORDER BY ?artefactLabel
+
+
+
+B.9 CQ9
+SELECT ?actorLabel ?excavation ?artefactLabel
+WHERE {
+?excavation a gerasim:ExcavationEvent ;
+crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P12i_was_present_at ?excavation .
+}
+ORDER BY ?actorLabel ?excavation ?artefactLabel
+Αν θέλουμε μόνο actors που εμφανίζονται σε παραπάνω από μία ανασκαφές:
+SELECT ?actorLabel (COUNT(DISTINCT ?excavation) AS ?excavationCount)
+WHERE {
+?excavation a gerasim:ExcavationEvent ;
+crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+}
+GROUP BY ?actorLabel
+HAVING (COUNT(DISTINCT ?excavation) > 1)
+ORDER BY DESC(?excavationCount)
+
+
+
+B.10 CQ10
+SELECT ?periodLabel ?artefactLabel ?placeLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:associatedWithPeriod ?period ;
+crm:P53_has_former_or_current_location ?place .
+?period skos:prefLabel ?periodLabel .
+?place rdfs:label ?placeLabel .
+}
+ORDER BY ?periodLabel ?placeLabel ?artefactLabel
+
+
+
+B.11 CQ11
+SELECT ?artefactLabel ?digitalTwin ?digitalTwinLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+hdto:HP1_has_digital_twin ?digitalTwin .
+?digitalTwin a hdto:HC2_Heritage_Digital_Twin ;
+rdfs:label ?digitalTwinLabel .
+}
+ORDER BY ?artefactLabel
+
+
+
+B.12 CQ12
+SELECT ?artefactLabel ?digitalTwinLabel ?excavation ?placeLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+hdto:HP1_has_digital_twin ?digitalTwin ;
+crm:P12i_was_present_at ?excavation .
+?digitalTwin rdfs:label ?digitalTwinLabel .
+91
+?excavation crm:P7_took_place_at ?place .
+?place rdfs:label ?placeLabel .
+}
+ORDER BY ?artefactLabel
+
+
+
+B.13 CQ13
+SELECT ?placeLabel ?periodLabel (COUNT(?artefact) AS ?artefactCount)
+WHERE {
+?artefact a gerasim:Artefact ;
+gerasim:associatedWithPeriod ?period ;
+crm:P53_has_former_or_current_location ?place .
+?period skos:prefLabel ?periodLabel .
+?place rdfs:label ?placeLabel .
+}
+GROUP BY ?placeLabel ?periodLabel
+ORDER BY ?placeLabel ?periodLabel
+
+
+
+B.14 CQ14
+SELECT ?artefactLabel ?periodLabel ?placeLabel ?excavation ?digitalTwinLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel .
+OPTIONAL {
+?artefact gerasim:associatedWithPeriod ?period .
+?period skos:prefLabel ?periodLabel .
+}
+OPTIONAL {
+?artefact crm:P53_has_former_or_current_location ?place .
+?place rdfs:label ?placeLabel .
+}
+OPTIONAL {
+?artefact crm:P12i_was_present_at ?excavation .
+}
+OPTIONAL {
+?artefact hdto:HP1_has_digital_twin ?digitalTwin .
+?digitalTwin rdfs:label ?digitalTwinLabel .
+}
+}
+ORDER BY ?artefactLabel
