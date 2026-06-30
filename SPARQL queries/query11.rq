@@ -1,1 +1,10 @@
-
+B.11 CQ11
+SELECT ?artefactLabel ?digitalTwin ?digitalTwinLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+hdto:HP1_has_digital_twin ?digitalTwin .
+?digitalTwin a hdto:HC2_Heritage_Digital_Twin ;
+rdfs:label ?digitalTwinLabel .
+}
+ORDER BY ?artefactLabel
