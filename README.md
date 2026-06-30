@@ -48,6 +48,24 @@ This project involved:
 
 ```
 
+## Architecture and Visualizations
+
+The repository includes:
+
+- Ontology architecture diagram
+- Entity relationship diagram
+- Knowledge graph prototype interface
+- Example graph visualization
+
+### Prototype Interface
+![Prototype](diagrams/prototype_interface.png)
+
+### Ontology Architecture
+![Architecture](diagrams/ontology_architecture.png)
+
+### Example Knowledge Graph
+![Graph](diagrams/artifact_entity_graph.png)
+
 ## Key Features
 
 - Semantic modeling of archaeological and cultural heritage data.
