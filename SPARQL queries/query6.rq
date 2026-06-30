@@ -1,1 +1,9 @@
-
+B.6 CQ6
+SELECT ?artefact ?artefactLabel ?contextLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:hasStratigraphicContext ?context .
+?context rdfs:label ?contextLabel .
+}
+ORDER BY ?contextLabel ?artefactLabel
