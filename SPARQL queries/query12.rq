@@ -1,1 +1,13 @@
-
+B.12 CQ12
+SELECT ?artefactLabel ?digitalTwinLabel ?excavation ?placeLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+hdto:HP1_has_digital_twin ?digitalTwin ;
+crm:P12i_was_present_at ?excavation .
+?digitalTwin rdfs:label ?digitalTwinLabel .
+91
+?excavation crm:P7_took_place_at ?place .
+?place rdfs:label ?placeLabel .
+}
+ORDER BY ?artefactLabel
