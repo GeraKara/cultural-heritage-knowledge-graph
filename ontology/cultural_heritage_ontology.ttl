@@ -1,1 +1,634 @@
+@prefix gerasim: <https://example.org/gerasim/ontology/> .
+@prefix gres: <https://example.org/gerasim/resource/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crma: <http://www.cidoc-crm.org/extensions/crmarchaeo/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix hdto: <http://isl.ics.forth.gr/ontology/echoes/> .
 
+#################################################################
+# Ontology header
+#################################################################
+
+<https://example.org/gerasim/ontology>
+    a owl:Ontology ;
+    rdfs:label "Gerasim ontology for cultural heritage data"@en ;
+    dcterms:title "Gerasim ontology for cultural heritage data"@en ;
+    dcterms:description "A revised ontology for cultural heritage data, aligned primarily with CIDOC CRM and complemented by CRMarchaeo, GeoSPARQL, SKOS, PROV-O and a limited HDTO-based digital representation layer."@en ;
+    dcterms:creator "Gerasimos Karathanos"@en ;
+    owl:imports <http://www.cidoc-crm.org/cidoc-crm/> ,
+                <http://www.cidoc-crm.org/extensions/crmarchaeo/> ,
+                <http://www.opengis.net/ont/geosparql#> ,
+                <http://www.w3.org/2004/02/skos/core#> ,
+                <http://www.w3.org/ns/prov#> ,
+                <http://purl.org/dc/terms/> ,
+                <http://www.w3.org/ns/dcat#> ,
+                <http://isl.ics.forth.gr/ontology/echoes/> ;
+    owl:versionInfo "v14.2"@en .
+
+#################################################################
+# Local classes retained after audit
+#################################################################
+
+gerasim:Artefact
+    a owl:Class ;
+    rdfs:label "Artefact"@en ;
+    rdfs:comment "Local application-level class for archaeological finds represented in the Gerasim model, including human-made objects and other physical archaeological remains where appropriate."@en ;
+    rdfs:subClassOf crm:E18_Physical_Thing .
+
+gerasim:ExcavationEvent
+    a owl:Class ;
+    rdfs:label "Excavation event"@en ;
+    rdfs:comment "Local application-level class for archaeological excavation events."@en ;
+    rdfs:subClassOf crma:A9_Archaeological_Excavation .
+
+gerasim:StratigraphicContext
+    a owl:Class ;
+    rdfs:label "Stratigraphic context"@en ;
+    rdfs:comment "Local application-level class for stratigraphic context / unit."@en ;
+    rdfs:subClassOf crma:A8_Stratigraphic_Unit .
+
+
+gerasim:DatasetRecord
+    a owl:Class ;
+    rdfs:label "Dataset record"@en ;
+    rdfs:comment "Local class for source records derived from datasets used in the thesis."@en ;
+    rdfs:subClassOf crm:E31_Document , prov:Entity .
+
+gerasim:FindContext
+    a owl:Class ;
+    rdfs:label "Find context"@en ;
+    rdfs:comment "Local lightweight categorical context of discovery, mainly for AADA-style values."@en ;
+    rdfs:subClassOf crm:E55_Type , skos:Concept .
+
+gerasim:Period
+    a owl:Class ;
+    rdfs:label "Period"@en ;
+    rdfs:comment "Application-level period node used both as a cultural-historical period and as a controlled vocabulary concept for lightweight dataset alignment. This modelling choice is used to support alignment with external period authorities such as PeriodO."@en ;
+    rdfs:subClassOf crm:E4_Period , skos:Concept .
+
+gerasim:Municipality
+    a owl:Class ;
+    rdfs:label "Municipality"@en ;
+    rdfs:comment "Administrative place used where municipality-level information is available in the dataset."@en ;
+    rdfs:subClassOf crm:E53_Place .
+
+#################################################################
+# Local object properties retained after audit
+#################################################################
+
+gerasim:associatedWithPeriod
+    a owl:ObjectProperty ;
+    rdfs:label "associated with period"@en ;
+    rdfs:comment "Application-level shortcut linking a CIDOC CRM entity, such as an artefact, event or documentation-related resource, directly to an application-level period node."@en ;
+    rdfs:domain crm:E1_CRM_Entity ;
+    rdfs:range gerasim:Period .
+
+gerasim:hasFindContext
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf crm:P2_has_type ;
+    rdfs:label "has find context"@en ;
+    rdfs:comment "Application-level shortcut linking an artefact to a lightweight find-context category."@en ;
+    rdfs:domain gerasim:Artefact ;
+    rdfs:range gerasim:FindContext .
+
+gerasim:hasStratigraphicContext
+    a owl:ObjectProperty ;
+    rdfs:label "has stratigraphic context"@en ;
+    rdfs:comment "Application-level shortcut linking an artefact directly to a stratigraphic context."@en ;
+    rdfs:domain gerasim:Artefact ;
+    rdfs:range gerasim:StratigraphicContext .
+
+
+gerasim:locatedInMunicipality
+    a owl:ObjectProperty ;
+    rdfs:label "located in municipality"@en ;
+    rdfs:comment "Links a place to a municipality where municipality information is present in the source data."@en ;
+    rdfs:domain crm:E53_Place ;
+    rdfs:range gerasim:Municipality .
+
+#################################################################
+# Local datatype properties retained after audit
+#################################################################
+
+
+gerasim:hasKKJCoordinate
+    a owl:DatatypeProperty ;
+    rdfs:label "has KKJ coordinate"@en ;
+    rdfs:comment "Stores Finnish KKJ / EPSG:2393 coordinate values as a single literal in the form \"x y\", preserving the original dataset coordinate pair when a full GeoSPARQL geometry is not sufficient or when the original KKJ values need to be retained."@en ;
+    rdfs:domain crm:E53_Place ;
+    rdfs:range xsd:string .
+
+#################################################################
+# External classes referenced directly in the model
+#################################################################
+
+hdto:HC2_Heritage_Digital_Twin a owl:Class .
+hdto:HC3_Tangible_Heritage_Entity a owl:Class .
+hdto:HP1_has_digital_twin a owl:ObjectProperty .
+
+#################################################################
+# Shared helper nodes
+#################################################################
+
+gres:mm a crm:E58_Measurement_Unit ; rdfs:label "millimetre"@en .
+gres:length a crm:E55_Type ; rdfs:label "Length (mm)"@en .
+gres:width a crm:E55_Type ; rdfs:label "Width (mm)"@en .
+gres:fragment_length a crm:E55_Type ; rdfs:label "Fragment length (mm)"@en .
+gres:fragment_width a crm:E55_Type ; rdfs:label "Fragment width (mm)"@en .
+gres:fragment_thickness a crm:E55_Type ; rdfs:label "Fragment thickness (mm)"@en .
+gres:weight_type a crm:E55_Type ; rdfs:label "Weight"@en .
+
+#################################################################
+# Example A1 — object-centric AADA instance
+#################################################################
+
+gres:artefact_KM_29954_10516
+    a crm:E22_Human-Made_Object, gerasim:Artefact ;
+    rdfs:label "KM 29954:10516"@en ;
+    crm:P1_is_identified_by gres:id_KM_29954_10516 ;
+    crm:P2_has_type gres:type_other_bone_artefact ;
+    crm:P53_has_former_or_current_location gres:place_92010043 ;
+    gerasim:associatedWithPeriod gres:period_n2 ;
+    crm:P43_has_dimension
+        gres:dim_frag_length_KM_29954_10516 ,
+        gres:dim_frag_width_KM_29954_10516 ,
+        gres:dim_frag_thickness_KM_29954_10516 ;
+    crm:P70_is_documented_in gres:record_KM_29954_10516 .
+
+gres:id_KM_29954_10516 a crm:E42_Identifier ; rdfs:label "KM 29954_10516" .
+
+gres:type_other_bone_artefact
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "Other bone artefact"@en ;
+    skos:altLabel "Luuesineen katkelma"@fi .
+
+gres:period_n2
+    a crm:E4_Period, skos:Concept, gerasim:Period ;
+    skos:prefLabel "n2"@en .
+
+gres:municipality_vantaa
+    a crm:E53_Place, gerasim:Municipality ;
+    rdfs:label "Vantaa"@en .
+
+gres:place_92010043
+    a crm:E53_Place, geo:Feature ;
+    rdfs:label "Stenkulla"@en ;
+    crm:P1_is_identified_by gres:siteid_92010043 ;
+    geo:hasGeometry gres:geom_92010043 ;
+    gerasim:hasKKJCoordinate "3423130 6688380" ;
+    gerasim:locatedInMunicipality gres:municipality_vantaa .
+
+gres:siteid_92010043 a crm:E42_Identifier ; rdfs:label "92010043" .
+
+gres:geom_92010043
+    a geo:Geometry ;
+    geo:asWKT "POINT(25.06875558 60.29590896)"^^geo:wktLiteral .
+
+gres:dim_frag_length_KM_29954_10516
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:fragment_length ;
+    crm:P90_has_value "10"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:dim_frag_width_KM_29954_10516
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:fragment_width ;
+    crm:P90_has_value "7"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:dim_frag_thickness_KM_29954_10516
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:fragment_thickness ;
+    crm:P90_has_value "5"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:record_KM_29954_10516
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    dcterms:source <https://zenodo.org/records/11279777> ;
+    rdfs:seeAlso <https://github.com/AADA-DATA/AADA-DATABase/blob/main/AADA%20Stone%20Age/SA%20bone.csv> .
+
+#################################################################
+# Example A2 — object-centric AADA instance
+#################################################################
+
+gres:artefact_KM_30460_10967
+    a crm:E22_Human-Made_Object, gerasim:Artefact ;
+    rdfs:label "KM 30460:10967"@en ;
+    crm:P1_is_identified_by gres:id_KM_30460_10967 ;
+    crm:P2_has_type gres:type_other_bone_artefact ;
+    crm:P53_has_former_or_current_location gres:place_707010045 ;
+    gerasim:associatedWithPeriod gres:period_n2 ;
+    crm:P43_has_dimension gres:dim_length_KM_30460_10967 , gres:dim_width_KM_30460_10967 ;
+    crm:P70_is_documented_in gres:record_KM_30460_10967 .
+
+gres:id_KM_30460_10967 a crm:E42_Identifier ; rdfs:label "KM 30460_10967" .
+
+gres:municipality_raakkyla
+    a crm:E53_Place, gerasim:Municipality ;
+    rdfs:label "Rääkkylä"@fi .
+
+gres:place_707010045
+    a crm:E53_Place, geo:Feature ;
+    rdfs:label "Vihi 1"@en ;
+    crm:P1_is_identified_by gres:siteid_707010045 ;
+    geo:hasGeometry gres:geom_707010045 ;
+    gerasim:hasKKJCoordinate "3636200 6907480" ;
+    gerasim:locatedInMunicipality gres:municipality_raakkyla .
+
+gres:siteid_707010045 a crm:E42_Identifier ; rdfs:label "707010045" .
+
+gres:geom_707010045
+    a geo:Geometry ;
+    geo:asWKT "POINT(29.97003938 62.31080103)"^^geo:wktLiteral .
+
+gres:dim_length_KM_30460_10967
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:length ;
+    crm:P90_has_value "11"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:dim_width_KM_30460_10967
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:width ;
+    crm:P90_has_value "4"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:record_KM_30460_10967
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    dcterms:source <https://zenodo.org/records/11279777> ;
+    rdfs:seeAlso <https://github.com/AADA-DATA/AADA-DATABase/blob/main/AADA%20Stone%20Age/SA%20bone.csv> .
+
+#################################################################
+# Example A3 — object-centric AADA instance
+#################################################################
+
+gres:artefact_KM_33461_305
+    a crm:E22_Human-Made_Object, gerasim:Artefact ;
+    rdfs:label "KM 33461:305"@en ;
+    crm:P1_is_identified_by gres:id_KM_33461_305 ;
+    crm:P2_has_type gres:type_other_bone_artefact ;
+    crm:P53_has_former_or_current_location gres:place_433010038 ;
+    gerasim:associatedWithPeriod gres:period_m3_n3 ;
+    crm:P43_has_dimension
+        gres:dim_frag_length_KM_33461_305 ,
+        gres:dim_frag_width_KM_33461_305 ,
+        gres:dim_frag_thickness_KM_33461_305 ;
+    crm:P70_is_documented_in gres:record_KM_33461_305 .
+
+gres:id_KM_33461_305 a crm:E42_Identifier ; rdfs:label "KM 33461_305" .
+
+gres:period_m3_n3
+    a crm:E4_Period, skos:Concept, gerasim:Period ;
+    skos:prefLabel "m3 / n3"@en .
+
+gres:municipality_loppi
+    a crm:E53_Place, gerasim:Municipality ;
+    rdfs:label "Loppi"@fi .
+
+gres:place_433010038
+    a crm:E53_Place, geo:Feature ;
+    rdfs:label "Karhumäki"@fi ;
+    crm:P1_is_identified_by gres:siteid_433010038 ;
+    geo:hasGeometry gres:geom_433010038 ;
+    gerasim:hasKKJCoordinate "3365210 6732900" ;
+    gerasim:locatedInMunicipality gres:municipality_loppi .
+
+gres:siteid_433010038 a crm:E42_Identifier ; rdfs:label "433010038" .
+
+gres:geom_433010038
+    a geo:Geometry ;
+    geo:asWKT "POINT(24.4025334 60.70182809)"^^geo:wktLiteral .
+
+gres:dim_frag_length_KM_33461_305
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:fragment_length ;
+    crm:P90_has_value "8"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:dim_frag_width_KM_33461_305
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:fragment_width ;
+    crm:P90_has_value "6"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:dim_frag_thickness_KM_33461_305
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:fragment_thickness ;
+    crm:P90_has_value "3"^^xsd:decimal ;
+    crm:P91_has_unit gres:mm .
+
+gres:record_KM_33461_305
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    dcterms:source <https://zenodo.org/records/11279777> ;
+    rdfs:seeAlso <https://github.com/AADA-DATA/AADA-DATABase/blob/main/AADA%20Stone%20Age/SA%20bone.csv> .
+
+#################################################################
+# Shared OpenContext helper nodes
+#################################################################
+
+gres:actor_denise_carruthers
+    a crm:E39_Actor ;
+    rdfs:label "Denise Carruthers"@en .
+
+gres:period_-6700_-6000
+    a crm:E4_Period, skos:Concept, gerasim:Period ;
+    skos:prefLabel "-6700 to -6000 BCE/CE"@en ;
+    crm:P4_has_time-span gres:timespan_-6700_-6000 .
+
+gres:timespan_-6700_-6000
+    a crm:E52_Time-Span ;
+    rdfs:label "Timespan from -6700 to -6000 BCE/CE"@en ;
+    crm:P82a_begin_of_the_begin "-6700"^^xsd:integer ;
+    crm:P82b_end_of_the_end "-6000"^^xsd:integer .
+
+gres:timespan_excavation_1994
+    a crm:E52_Time-Span ;
+    rdfs:label "Excavation in 1994"@en ;
+    crm:P82a_begin_of_the_begin "1994-01-01"^^xsd:date ;
+    crm:P82b_end_of_the_end "1994-12-31"^^xsd:date .
+
+#################################################################
+# Example B1 — event-centric OpenContext instance
+#################################################################
+
+<http://opencontext.org/subjects/TESTSPA0000005777>
+    a gerasim:Artefact ;
+    rdfs:label "Bone Ref# 1160"@en ;
+    crm:P1_is_identified_by gres:id_TESTSPA0000005777 ;
+    crm:P2_has_type gres:type_metatarsal , gres:taxon_ovis , gres:sex_male ;
+    gerasim:associatedWithPeriod gres:period_-6700_-6000 ;
+    crm:P12i_was_present_at gres:exc_TESTSPA0000005777 ;
+    gerasim:hasStratigraphicContext gres:strat_BBH ;
+    crm:P43_has_dimension gres:dim_weight_TESTSPA0000005777 ;
+    crm:P70_is_documented_in gres:record_TESTSPA0000005777 .
+
+gres:id_TESTSPA0000005777 a crm:E42_Identifier ; rdfs:label "TESTSPA0000005777" .
+
+gres:type_metatarsal
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "Metatarsal"@en ;
+    skos:exactMatch <http://purl.obolibrary.org/obo/UBERON_0003651> ,
+                    <http://purl.obolibrary.org/obo/UBERON_0003652> ,
+                    <http://purl.obolibrary.org/obo/UBERON_0003653> ,
+                    <http://purl.obolibrary.org/obo/UBERON_0013588> .
+
+gres:taxon_ovis
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "Ovis"@en ;
+    skos:exactMatch <http://eol.org/pages/39510> .
+
+gres:sex_male
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "male organism"@en ;
+    skos:exactMatch <http://purl.obolibrary.org/obo/UBERON_0003101> .
+
+gres:exc_TESTSPA0000005777
+    a crm:E7_Activity, crma:A9_Archaeological_Excavation, gerasim:ExcavationEvent ;
+    crm:P7_took_place_at gres:place_TESTSPA0000003444 ;
+    crm:P4_has_time-span gres:timespan_excavation_1994 ;
+    crm:P14_carried_out_by gres:actor_denise_carruthers .
+
+gres:place_TESTSPA0000003444
+    a crm:E53_Place, geo:Feature ;
+    rdfs:label "Turkey / Pınarbaşı / Site B / Stratum 5 / Turkey / Pınarbaşı / Site B / Stratum 6 / Context BBH"@en ;
+    crm:P1_is_identified_by gres:id_place_TESTSPA0000003444 ;
+    geo:hasGeometry gres:geom_TESTSPA0000003444 .
+
+gres:id_place_TESTSPA0000003444 a crm:E42_Identifier ; rdfs:label "TESTSPA0000003444" .
+
+gres:geom_TESTSPA0000003444
+    a geo:Geometry ;
+    geo:asWKT "POINT(33.018551 37.49432)"^^geo:wktLiteral .
+
+gres:strat_BBH
+    a crma:A8_Stratigraphic_Unit, gerasim:StratigraphicContext ;
+    rdfs:label "Context BBH"@en .
+
+gres:dim_weight_TESTSPA0000005777
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:weight_type ;
+    crm:P90_has_value "12.8"^^xsd:decimal .
+
+gres:record_TESTSPA0000005777
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    dcterms:source <http://opencontext.org/projects/TESTPRJ0000000004> ;
+    dcterms:creator gres:actor_denise_carruthers ;
+    rdfs:seeAlso <http://opencontext.org/subjects/TESTSPA0000005777> .
+
+#################################################################
+# Example B2 — event-centric OpenContext instance
+#################################################################
+
+<http://opencontext.org/subjects/TESTSPA0000003836>
+    a gerasim:Artefact ;
+    rdfs:label "Bone Ref# 2440"@en ;
+    crm:P1_is_identified_by gres:id_TESTSPA0000003836 ;
+    crm:P2_has_type gres:type_middle_phalanx , gres:taxon_canis_lupus ;
+    gerasim:associatedWithPeriod gres:period_-6700_-6000 ;
+    crm:P12i_was_present_at gres:exc_TESTSPA0000003836 ;
+    gerasim:hasStratigraphicContext gres:strat_BAZ ;
+    crm:P70_is_documented_in gres:record_TESTSPA0000003836 .
+
+gres:id_TESTSPA0000003836 a crm:E42_Identifier ; rdfs:label "TESTSPA0000003836" .
+
+gres:type_middle_phalanx
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "middle phalanx"@en ;
+    skos:exactMatch <http://purl.obolibrary.org/obo/UBERON_0004301> .
+
+gres:taxon_canis_lupus
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "Canis lupus Linnaeus, 1758"@en ;
+    skos:exactMatch <http://eol.org/pages/328607> .
+
+gres:exc_TESTSPA0000003836
+    a crm:E7_Activity, crma:A9_Archaeological_Excavation, gerasim:ExcavationEvent ;
+    crm:P7_took_place_at gres:place_TESTSPA0000003554 ;
+    crm:P4_has_time-span gres:timespan_excavation_1994 ;
+    crm:P14_carried_out_by gres:actor_denise_carruthers .
+
+gres:place_TESTSPA0000003554
+    a crm:E53_Place, geo:Feature ;
+    rdfs:label "Turkey / Pınarbaşı / Site B / Stratum 5 / Context BAZ"@en ;
+    crm:P1_is_identified_by gres:id_place_TESTSPA0000003554 ;
+    geo:hasGeometry gres:geom_TESTSPA0000003554 .
+
+gres:id_place_TESTSPA0000003554 a crm:E42_Identifier ; rdfs:label "TESTSPA0000003554" .
+
+gres:geom_TESTSPA0000003554
+    a geo:Geometry ;
+    geo:asWKT "POINT(33.018551 37.49432)"^^geo:wktLiteral .
+
+gres:strat_BAZ
+    a crma:A8_Stratigraphic_Unit, gerasim:StratigraphicContext ;
+    rdfs:label "Context BAZ"@en .
+
+gres:record_TESTSPA0000003836
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    dcterms:source <http://opencontext.org/projects/TESTPRJ0000000004> ;
+    dcterms:creator gres:actor_denise_carruthers ;
+    rdfs:seeAlso <http://opencontext.org/subjects/TESTSPA0000003836> .
+
+#################################################################
+# Example B3 — event-centric OpenContext instance
+#################################################################
+
+<http://opencontext.org/subjects/TESTSPA0000005212>
+    a gerasim:Artefact ;
+    rdfs:label "Bone Ref# 2553"@en ;
+    crm:P1_is_identified_by gres:id_TESTSPA0000005212 ;
+    crm:P2_has_type gres:type_bone , gres:type_not_identifiable ;
+    gerasim:associatedWithPeriod gres:period_-6700_-6000 ;
+    crm:P12i_was_present_at gres:exc_TESTSPA0000005212 ;
+    gerasim:hasStratigraphicContext gres:strat_BBI ;
+    crm:P43_has_dimension gres:dim_weight_TESTSPA0000005212 ;
+    crm:P70_is_documented_in gres:record_TESTSPA0000005212 .
+
+gres:id_TESTSPA0000005212 a crm:E42_Identifier ; rdfs:label "TESTSPA0000005212" .
+
+gres:type_bone
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "Bone"@en .
+
+gres:type_not_identifiable
+    a crm:E55_Type, skos:Concept ;
+    skos:prefLabel "Not Identifiable"@en .
+
+gres:exc_TESTSPA0000005212
+    a crm:E7_Activity, crma:A9_Archaeological_Excavation, gerasim:ExcavationEvent ;
+    crm:P7_took_place_at gres:place_TESTSPA0000003456 ;
+    crm:P4_has_time-span gres:timespan_excavation_1994 ;
+    crm:P14_carried_out_by gres:actor_denise_carruthers .
+
+gres:place_TESTSPA0000003456
+    a crm:E53_Place, geo:Feature ;
+    rdfs:label "Turkey / Pınarbaşı / Site B / Stratum 6 / Context BBI"@en ;
+    crm:P1_is_identified_by gres:id_place_TESTSPA0000003456 ;
+    geo:hasGeometry gres:geom_TESTSPA0000003456 .
+
+gres:id_place_TESTSPA0000003456 a crm:E42_Identifier ; rdfs:label "TESTSPA0000003456" .
+
+gres:geom_TESTSPA0000003456
+    a geo:Geometry ;
+    geo:asWKT "POINT(33.018551 37.49432)"^^geo:wktLiteral .
+
+gres:strat_BBI
+    a crma:A8_Stratigraphic_Unit, gerasim:StratigraphicContext ;
+    rdfs:label "Context BBI"@en .
+
+gres:dim_weight_TESTSPA0000005212
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:weight_type ;
+    crm:P90_has_value "26.3"^^xsd:decimal .
+
+gres:record_TESTSPA0000005212
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    dcterms:source <http://opencontext.org/projects/TESTPRJ0000000004> ;
+    dcterms:creator gres:actor_denise_carruthers ;
+    rdfs:seeAlso <http://opencontext.org/subjects/TESTSPA0000005212> .
+
+
+#################################################################
+# Enriched demonstrator / event, documentation, production,
+# and digital twin layers combined in one illustrative example
+#################################################################
+
+gres:artefact_demo_bone_1160_enriched
+    a gerasim:Artefact, hdto:HC3_Tangible_Heritage_Entity ;
+    rdfs:label "Enriched demonstrator for Bone Ref# 1160"@en ;
+    crm:P1_is_identified_by gres:id_demo_bone_1160_enriched ;
+    crm:P2_has_type gres:type_metatarsal , gres:taxon_ovis , gres:sex_male ;
+    crm:P45_consists_of gres:material_bone ;
+    crm:P108i_was_produced_by gres:production_demo_bone_1160 ;
+    crm:P12i_was_present_at gres:exc_demo_bone_1160 ;
+    gerasim:associatedWithPeriod gres:period_-6700_-6000 ;
+    gerasim:hasStratigraphicContext gres:strat_BBH ;
+    hdto:HP1_has_digital_twin gres:digital_twin_demo_bone_1160 ;
+    crm:P43_has_dimension gres:dim_weight_demo_bone_1160 ;
+    crm:P70_is_documented_in gres:record_demo_bone_1160 .
+
+gres:id_demo_bone_1160_enriched
+    a crm:E42_Identifier ;
+    rdfs:label "DEMO-BONE-1160-ENRICHED"@en .
+
+gres:material_bone
+    a crm:E57_Material, skos:Concept ;
+    skos:prefLabel "bone"@en .
+
+gres:production_demo_bone_1160
+    a crm:E12_Production ;
+    rdfs:label "Hypothetical production event for enriched demonstrator artefact"@en ;
+    crm:P4_has_time-span gres:timespan_production_demo_bone_1160 ;
+    crm:P7_took_place_at gres:place_production_region_demo ;
+    crm:P14_carried_out_by gres:actor_unknown_maker_demo .
+
+gres:timespan_production_demo_bone_1160
+    a crm:E52_Time-Span ;
+    rdfs:label "Undetermined prehistoric production interval"@en ;
+    rdfs:comment "No precise begin/end is asserted because the demonstrator does not provide a reliable production date for the archaeological remain."@en .
+
+gres:place_production_region_demo
+    a crm:E53_Place ;
+    rdfs:label "Undetermined production region"@en .
+
+gres:actor_unknown_maker_demo
+    a crm:E39_Actor ;
+    rdfs:label "Unknown maker"@en .
+
+gres:exc_demo_bone_1160
+    a crm:E7_Activity, crma:A9_Archaeological_Excavation, gerasim:ExcavationEvent ;
+    rdfs:label "Excavation event associated with Bone Ref# 1160 demonstrator"@en ;
+    crm:P7_took_place_at gres:place_TESTSPA0000003444 ;
+    crm:P4_has_time-span gres:timespan_excavation_1994 ;
+    crm:P14_carried_out_by gres:actor_denise_carruthers .
+
+gres:dim_weight_demo_bone_1160
+    a crm:E54_Dimension ;
+    crm:P2_has_type gres:weight_type ;
+    crm:P90_has_value "12.8"^^xsd:decimal .
+
+gres:record_demo_bone_1160
+    a crm:E31_Document, prov:Entity, gerasim:DatasetRecord ;
+    rdfs:label "Source record for enriched demonstrator based on Bone Ref# 1160"@en ;
+    dcterms:source <http://opencontext.org/projects/TESTPRJ0000000004> ;
+    rdfs:seeAlso <http://opencontext.org/subjects/TESTSPA0000005777> .
+
+gres:doc_creation_demo_bone_1160
+    a crm:E65_Creation ;
+    rdfs:label "Documentation creation event for enriched demonstrator"@en ;
+    crm:P14_carried_out_by gres:actor_denise_carruthers ;
+    crm:P4_has_time-span gres:timespan_doc_demo_bone_1160 ;
+    crm:P94_has_created gres:photo_demo_bone_1160 , gres:fieldnote_demo_bone_1160 , gres:digital_twin_demo_bone_1160 ;
+    prov:wasDerivedFrom <http://opencontext.org/projects/TESTPRJ0000000004> .
+
+gres:timespan_doc_demo_bone_1160
+    a crm:E52_Time-Span ;
+    rdfs:label "Documentation event timespan for enriched demonstrator"@en ;
+    rdfs:comment "No precise begin/end is asserted because the documentation time is illustrative and not explicitly derived from the source dataset."@en .
+
+gres:photo_demo_bone_1160
+    a crm:E36_Visual_Item ;
+    rdfs:label "Illustrative photograph for enriched demonstrator"@en ;
+    crm:P138_represents gres:artefact_demo_bone_1160_enriched ;
+    crm:P94i_was_created_by gres:doc_creation_demo_bone_1160 .
+
+gres:fieldnote_demo_bone_1160
+    a crm:E31_Document ;
+    rdfs:label "Illustrative field note for enriched demonstrator"@en ;
+    crm:P67_refers_to gres:artefact_demo_bone_1160_enriched ;
+    crm:P94i_was_created_by gres:doc_creation_demo_bone_1160 .
+
+gres:digital_twin_demo_bone_1160
+    a hdto:HC2_Heritage_Digital_Twin ;
+    rdfs:label "Illustrative digital twin for enriched demonstrator"@en ;
+    crm:P67_refers_to gres:artefact_demo_bone_1160_enriched ;
+    crm:P138_represents gres:artefact_demo_bone_1160_enriched ;
+    crm:P94i_was_created_by gres:doc_creation_demo_bone_1160 .
