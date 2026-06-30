@@ -1,1 +1,27 @@
-
+B.3 CQ3
+SELECT ?artefact ?artefactLabel ?period ?periodLabel ?begin ?end
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:associatedWithPeriod ?period .
+?period skos:prefLabel ?periodLabel .
+OPTIONAL {
+?period crm:P4_has_time-span ?timespan .
+OPTIONAL { ?timespan crm:P82a_begin_of_the_begin ?begin . }
+OPTIONAL { ?timespan crm:P82b_end_of_the_end ?end . }
+}
+}
+ORDER BY ?periodLabel ?artefactLabel
+Αν υπάρχουν και ιεραρχικές σχέσεις περιόδων:
+SELECT ?artefactLabel ?periodLabel ?broaderPeriodLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:associatedWithPeriod ?period .
+?period skos:prefLabel ?periodLabel .
+OPTIONAL {
+?period skos:broader ?broaderPeriod .
+?broaderPeriod skos:prefLabel ?broaderPeriodLabel .
+}
+}
+ORDER BY ?artefactLabel
