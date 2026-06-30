@@ -44,9 +44,8 @@ This project involved:
 │   ├── query2.rq
 │   └── query3.rq
 ├── diagrams/
-│   └── ontology_diagram.png
-└── docs/
-    └── thesis_redacted.pdf
+   └── ontology_diagram.png
+
 ```
 
 ## Key Features
