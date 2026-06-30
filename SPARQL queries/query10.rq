@@ -1,1 +1,11 @@
-
+B.10 CQ10
+SELECT ?periodLabel ?artefactLabel ?placeLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+gerasim:associatedWithPeriod ?period ;
+crm:P53_has_former_or_current_location ?place .
+?period skos:prefLabel ?periodLabel .
+?place rdfs:label ?placeLabel .
+}
+ORDER BY ?periodLabel ?placeLabel ?artefactLabel
