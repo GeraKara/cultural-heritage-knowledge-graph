@@ -1,1 +1,11 @@
-
+B.13 CQ13
+SELECT ?placeLabel ?periodLabel (COUNT(?artefact) AS ?artefactCount)
+WHERE {
+?artefact a gerasim:Artefact ;
+gerasim:associatedWithPeriod ?period ;
+crm:P53_has_former_or_current_location ?place .
+?period skos:prefLabel ?periodLabel .
+?place rdfs:label ?placeLabel .
+}
+GROUP BY ?placeLabel ?periodLabel
+ORDER BY ?placeLabel ?periodLabel
