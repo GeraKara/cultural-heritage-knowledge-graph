@@ -1,6 +1,3 @@
-# cultural-heritage-knowledge-graph
-Knowledge Graph for Cultural Heritage and Archaeological Data using RDF, CIDOC CRM, SPARQL and ontology engineering.
-
 # Cultural Heritage Knowledge Graph
 
 A semantic knowledge graph for cultural heritage and archaeological data, developed as part of my Diploma Thesis in Computer Engineering and Electronic Systems.
