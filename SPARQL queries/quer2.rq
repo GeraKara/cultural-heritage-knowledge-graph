@@ -1,1 +1,13 @@
-
+B.2 CQ2
+SELECT ?artefact ?artefactLabel ?typeLabel ?materialLabel
+WHERE {
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P2_has_type ?type .
+?type skos:prefLabel ?typeLabel .
+OPTIONAL {
+?artefact crm:P45_consists_of ?material .
+?material skos:prefLabel ?materialLabel .
+}
+}
+ORDER BY ?artefactLabel
