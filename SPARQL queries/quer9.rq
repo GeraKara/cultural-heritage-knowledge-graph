@@ -1,1 +1,21 @@
-
+B.9 CQ9
+SELECT ?actorLabel ?excavation ?artefactLabel
+WHERE {
+?excavation a gerasim:ExcavationEvent ;
+crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+?artefact a gerasim:Artefact ;
+rdfs:label ?artefactLabel ;
+crm:P12i_was_present_at ?excavation .
+}
+ORDER BY ?actorLabel ?excavation ?artefactLabel
+Αν θέλουμε μόνο actors που εμφανίζονται σε παραπάνω από μία ανασκαφές:
+SELECT ?actorLabel (COUNT(DISTINCT ?excavation) AS ?excavationCount)
+WHERE {
+?excavation a gerasim:ExcavationEvent ;
+crm:P14_carried_out_by ?actor .
+?actor rdfs:label ?actorLabel .
+}
+GROUP BY ?actorLabel
+HAVING (COUNT(DISTINCT ?excavation) > 1)
+ORDER BY DESC(?excavationCount)
